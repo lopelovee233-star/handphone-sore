@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>handphone-sore</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#21170f;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}
+button{font:inherit;cursor:pointer;border:0}
+.phone{max-width:430px;width:100%;height:100dvh;min-height:560px;margin:auto;background:#613613;color:white;position:relative;overflow:hidden}
+.status{position:absolute;top:10px;left:22px;right:22px;display:flex;justify-content:space-between;font-size:13px;font-weight:bold;z-index:5}
+.island{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:95px;height:27px;border-radius:22px;background:#000;z-index:8}
+.screen{display:none;position:absolute;inset:0;padding:50px 18px 30px}
+.screen.active{display:block}
+.bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:135px;height:5px;background:white;border-radius:8px;z-index:10}
+.lock{text-align:center;padding-top:70px}
+.date{font-size:18px}
+.clock{font-size:80px;font-weight:300;letter-spacing:-4px;margin:0}
+.notice{background:#eee9e4;color:#222;text-align:left;padding:13px;border-radius:16px;margin-top:50px;font-size:13px}
+.notice b{display:block;margin-bottom:5px}
+.hint{position:absolute;bottom:45px;left:0;right:0;font-size:12px}
+.pass{text-align:center;padding-top:95px}
+.pass h3{font-weight:500}
+.dots{display:flex;justify-content:center;gap:17px;margin:25px}
+.dot{border:1px solid white;width:10px;height:10px;border-radius:50%}
+.dot.on{background:white}
+.keys{width:250px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.key{width:67px;height:67px;border-radius:50%;background:#ffffff30;color:white;font-size:25px;justify-self:center}
+.key small{display:block;font-size:9px}
+#err{height:20px;font-size:13px}
+.home{padding-top:70px}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px 6px}
+.app{background:none;color:white;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.appicon{width:57px;height:57px;border-radius:14px;display:grid;place-items:center;font-size:31px}
+.notesicon{background:linear-gradient(#fff 0 28%,#f5d44b 28% 34%,#fff 34%);color:#d5a51b}
+.musicicon{background:linear-gradient(135deg,#ffabc8,#a32b92)}
+.msgicon{background:#25c65a}
+.photoicon{background:white}
+.dock{position:absolute;bottom:27px;left:18px;right:18px;padding:12px;background:#ffffff35;border-radius:27px;display:flex;justify-content:space-around}
+.panel{background:#f7f7f7;color:#171717;padding:0;overflow:auto}
+.nav{height:55px;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid #ddd;background:#f8f8f8;position:sticky;top:0}
+.nav button,.back{background:none;color:#087cff}
+.note{padding:16px;border-bottom:1px solid #ddd}
+.note h3{margin:0 0 5px;font-size:17px}
+.note p{margin:0;color:#777;font-size:13px}
+.editor{padding:18px}
+.editor textarea{width:100%;height:60vh;border:0;background:transparent;font:16px/1.6 Arial;outline:none}
+.empty{text-align:center;color:#777;margin-top:35vh}
+.chat{padding:0;background:#fff;color:#111;display:flex;flex-direction:column}
+.chathead{text-align:center;padding:12px;background:#f8f8f8;border-bottom:1px solid #ddd}
+.chathead button{float:left;background:none;color:#087cff}
+.messages{flex:1;overflow:auto;padding:14px 12px;display:flex;flex-direction:column;gap:9px}
+.bubble{max-width:83%;padding:10px 14px;border-radius:19px;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+.in{align-self:flex-start;background:#e9e9eb;border-bottom-left-radius:5px}
+.out{align-self:flex-end;background:#1685f8;color:white;border-bottom-right-radius:5px}
+.inputbar{padding:13px;border-top:1px solid #ddd;color:#888}
+.call{background:linear-gradient(#4b3425,#171717);text-align:center;padding-top:125px}
+.callname{font-size:26px;margin:28px 0 8px}
+.dim{opacity:.7;font-size:14px}
+.callbubble{margin:60px 5px 0;background:#ffffff20;padding:20px;border-radius:22px;font-size:19px;min-height:80px}
+.controls{position:absolute;bottom:90px;left:0;right:0;display:flex;justify-content:center;gap:55px}
+.controls button{width:65px;height:65px;border-radius:50%;font-size:26px;background:#ed3e49;color:white}
+.controls .answer{background:#29bd60}
+.toast{position:absolute;top:48px;left:12px;right:12px;background:#f3f3f3;color:#171717;border-radius:17px;padding:14px;z-index:15;display:none;box-shadow:0 4px 18px #0003;font-size:13px}
+.toast button{float:right;background:#1685f8;color:white;border-radius:18px;padding:7px 12px}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+<div class="status"><span>11:20</span><span>▮▮▮　Wi-Fi　▰</span></div>
+<div class="island" id="island"></div>
+
+<section class="screen active lock" id="lock">
+<div class="date">Thursday, October 22</div>
+<h1 class="clock">11:20</h1>
+<div class="notice"><b>MESSAGES · now</b>babe jael❤️<br>good morning, babe!</div>
+<div class="hint">↑ Swipe up to open</div>
+</section>
+
+<section class="screen pass" id="pass">
+<h3>Enter Passcode</h3>
+<div class="dots" id="dots"></div><div id="err"></div>
+<div class="keys">
+<button class="key" onclick="digit('1')">1</button><button class="key" onclick="digit('2')">2<small>ABC</small></button><button class="key" onclick="digit('3')">3<small>DEF</small></button>
+<button class="key" onclick="digit('4')">4<small>GHI</small></button><button class="key" onclick="digit('5')">5<small>JKL</small></button><button class="key" onclick="digit('6')">6<small>MNO</small></button>
+<button class="key" onclick="digit('7')">7<small>PQRS</small></button><button class="key" onclick="digit('8')">8<small>TUV</small></button><button class="key" onclick="digit('9')">9<small>WXYZ</small></button>
+<button class="key" style="grid-column:2" onclick="digit('0')">0</button><button onclick="del()" style="background:none;color:white">⌫</button>
+</div>
+</section>
+
+<section class="screen home" id="home">
+<div class="apps">
+<button class="app" onclick="openApp('notes')"><span class="appicon notesicon">≡</span>Notes</button>
+<button class="app" onclick="openApp('music')"><span class="appicon musicicon">♫</span>Music</button>
+<button class="app" onclick="openApp('chat')"><span class="appicon msgicon">●</span>Messages</button>
+<button class="app" onclick="openApp('photos')"><span class="appicon photoicon">🌈</span>Photos</button>
+</div>
+<div class="dock">
+<button class="app" onclick="openApp('chat')"><span class="appicon msgicon">●</span></button>
+<button class="app" onclick="openApp('music')"><span class="appicon musicicon">♫</span></button>
+<button class="app" onclick="openApp('photos')"><span class="appicon photoicon">🌈</span></button>
+</div>
+</section>
+
+<section class="screen panel" id="notes">
+<div class="nav"><button onclick="goHome()">‹ Home</button><b>Notes</b><button onclick="newNote()">New</button></div>
+<div id="noteList">
+<div class="note" onclick="readNote('jadwal hari minggu\\n\\n11:00......')"><h3>jadwal hari minggu</h3><p>11:00......</p></div>
+<div class="note" onclick="readNote('lirik lagu\\n\\nayo ayo')"><h3>lirik lagu</h3><p>ayo ayo</p></div>
+<div class="note" onclick="readNote('aku punya pacar\\n\\nnamanya jael dia nyebelin')"><h3>aku punya pacar</h3><p>namanya jael dia nyebelin</p></div>
+</div>
+<div class="editor" id="editor" style="display:none"><textarea id="noteText" placeholder="Start writing..."></textarea><button class="back" onclick="saveNote()">Save</button></div>
+</section>
+
+<section class="screen panel" id="photos">
+<div class="nav"><button onclick="goHome()">‹ Home</button><b>Library</b><span>•••</span></div>
+<div class="empty">No Photos or Videos</div>
+</section>
+
+<section class="screen panel" id="music">
+<div class="nav"><button onclick="goHome()">‹ Home</button><b>Listen Now</b><span>•••</span></div>
+<div style="padding:22px"><h2>Music</h2><p style="color:#777">Your music will appear here.</p><div style="font-size:90px;text-align:center;margin-top:70px;color:#cf54ad">♫</div></div>
+</section>
+
+<section class="screen chat" id="chat">
+<div class="chathead"><button onclick="goHome()">‹</button><div>♡</div><b>babe jael❤️</b><div style="font-size:11px;color:#888">iMessage</div></div>
+<div class="messages" id="messages"></div>
+<div class="inputbar">＋　iMessage</div>
+</section>
+
+<section class="screen call" id="call">
+<div style="font-size:48px">●</div><div class="callname">babe jael❤️</div>
+<div class="dim" id="callstatus">Incoming call...</div>
+<div class="callbubble" id="callbubble"></div>
+<div class="controls" id="callcontrols">
+<button onclick="endCall()">×</button><button class="answer" onclick="answerCall()">☎</button>
+</div>
+</section>
+
+<div class="toast" id="toast"><button onclick="openApp('chat')">Open</button><b>babe jael❤️</b><span id="toasttext"></span></div>
+<div class="bar" id="bar"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let pin='',current='',chatStarted=false,callIndex=0,callTimer=null;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');current=id}
+function unlockHint(){show('pass')}
+$('lock').addEventListener('click',()=>show('pass'));
+let startY=0;
+$('lock').addEventListener('touchstart',e=>startY=e.touches[0].clientY);
+$('lock').addEventListener('touchend',e=>{if(startY-e.changedTouches[0].clientY>30)show('pass')});
+function drawDots(){$('dots').innerHTML=[0,1,2,3].map(i=>'<span class="dot '+(i<pin.length?'on':'')+'"></span>').join('')}
+function digit(n){if(pin.length>=4)return;pin+=n;drawDots();if(pin.length===4){if(pin==='2023'){setTimeout(()=>{show('home');pin='';drawDots();startChat()},180)}else{ $('err').textContent='Incorrect passcode';setTimeout(()=>{pin='';drawDots();$('err').textContent=''},650)}}}
+function del(){pin=pin.slice(0,-1);drawDots()}
+function goHome(){show('home')}
+function openApp(id){show(id);if(id==='chat'&&!chatStarted)startChat()}
+function readNote(t){$('noteList').style.display='none';$('editor').style.display='block';$('noteText').value=t}
+function newNote(){readNote('')}
+function saveNote(){let t=$('noteText').value.trim();if(t){let title=t.split('\n')[0];let d=document.createElement('div');d.className='note';d.innerHTML='<h3></h3><p></p>';d.querySelector('h3').textContent=title;d.querySelector('p').textContent=t.split('\n').slice(1).join(' ');d.onclick=()=>readNote(t);$('noteList').prepend(d)}$('noteList').style.display='block';$('editor').style.display='none'}
+const chatLines=[
+['in','babe udah makan?'],
+['out','UDAHH ish kamu gausah ngingetin ak makan.'],
+['out','ak pasti makan lah'],
+['in','iya iya babe cuma nanya kok'],
+['in','live location lagi dimana?'],
+['out','lagi di rumah jelas'],
+['out','leyeh-leyeh is my lipee'],
+['in','wkwk'],
+['in','sleep call?'],
+['out','ayoo']
+];
+function bubble(parent,cls,txt){let d=document.createElement('div');d.className='bubble '+cls;d.textContent=txt;parent.appendChild(d);parent.scrollTop=parent.scrollHeight}
+function startChat(){if(chatStarted)return;chatStarted=true;let i=0;function next(){if(i<chatLines.length){bubble($('messages'),chatLines[i][0],chatLines[i][1]);i++;setTimeout(next,650)}else{setTimeout(showIncomingCall,1000)}}next()}
+function showIncomingCall(){$('toasttext').textContent='Incoming FaceTime Audio…';$('toast').style.display='block';$('toast').onclick=()=>{ $('toast').style.display='none';show('call');$('callstatus').textContent='Incoming call';$('callbubble').textContent='';$('callcontrols').innerHTML='<button onclick="endCall()">×</button><button class="answer" onclick="answerCall()">☎</button>'}}
+const callLines=[
+['in','kamu hari ini ngapain aja'],
+['out','jalan jalan makan dubai chewy cookie'],
+['out','aduh eeunakkkkk'],
+['in','hahaha'],
+['out','trs nonton film Spider-Man'],
+['out','ten out a tenn!'],
+['in','hmmm next nonton bareng ya?'],
+['out','iya pastinya'],
+['out','ak hari ini pusying'],
+['out','so much pressure'],
+['out','bos minta deadline'],
+['out','ayeehhh'],
+['in','um really? nanti ak bantu ya sayangg']
+];
+function answerCall(){$('island').classList.add('wide');$('callstatus').textContent='00:01';$('callcontrols').innerHTML='<button onclick="endCall()">☎</button>';callIndex=0;$('callbubble').textContent='';nextCallLine()}
+function nextCallLine(){if(callIndex<callLines.length){let [who,msg]=callLines[callIndex++];$('callbubble').textContent=msg;$('callstatus').textContent='Connected';callTimer=setTimeout(nextCallLine,1900)}else{setTimeout(endCall,1200)}}
+function endCall(){clearTimeout(callTimer);$('island').classList.remove('wide');$('toast').style.display='none';show('home');if(callIndex>=callLines.length){setTimeout(()=>notify('babe so sorry ya, ak dipanggil bapak'),1200);setTimeout(()=>notify('biasa kerjaan'),5000)}}
+function notify(msg){$('toasttext').textContent=msg;$('toast').style.display='block';setTimeout(()=>{$('toast').style.display='none'},4000)}
+drawDots();
+</script>
+</body>
+</html>
